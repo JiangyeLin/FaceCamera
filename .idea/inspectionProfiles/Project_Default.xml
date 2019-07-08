@@ -17,16 +17,13 @@
     <inspection_tool class="AlibabaAvoidCommentBehindStatement" enabled="false" level="MAJOR" enabled_by_default="false" />
     <inspection_tool class="AlibabaAvoidComplexCondition" enabled="false" level="MAJOR" enabled_by_default="false" />
     <inspection_tool class="AlibabaAvoidConcurrentCompetitionRandom" enabled="false" level="MAJOR" enabled_by_default="false" />
-    <inspection_tool class="AlibabaAvoidDoubleOrFloatEqualCompare" enabled="false" level="CRITICAL" enabled_by_default="false" />
     <inspection_tool class="AlibabaAvoidManuallyCreateThread" enabled="false" level="CRITICAL" enabled_by_default="false" />
     <inspection_tool class="AlibabaAvoidMissUseOfMathRandom" enabled="false" level="MAJOR" enabled_by_default="false" />
-    <inspection_tool class="AlibabaAvoidNegationOperator" enabled="false" level="MAJOR" enabled_by_default="false" />
     <inspection_tool class="AlibabaAvoidNewDateGetTime" enabled="false" level="BLOCKER" enabled_by_default="false" />
     <inspection_tool class="AlibabaAvoidPatternCompileInMethod" enabled="false" level="BLOCKER" enabled_by_default="false" />
     <inspection_tool class="AlibabaAvoidReturnInFinally" enabled="false" level="CRITICAL" enabled_by_default="false" />
     <inspection_tool class="AlibabaAvoidStartWithDollarAndUnderLineNaming" enabled="false" level="CRITICAL" enabled_by_default="false" />
     <inspection_tool class="AlibabaAvoidUseTimer" enabled="false" level="BLOCKER" enabled_by_default="false" />
-    <inspection_tool class="AlibabaBigDecimalAvoidDoubleConstructor" enabled="false" level="MAJOR" enabled_by_default="false" />
     <inspection_tool class="AlibabaBooleanPropertyShouldNotStartWithIs" enabled="false" level="CRITICAL" enabled_by_default="false" />
     <inspection_tool class="AlibabaClassCastExceptionWithSubListToArrayList" enabled="false" level="CRITICAL" enabled_by_default="false" />
     <inspection_tool class="AlibabaClassCastExceptionWithToArray" enabled="false" level="CRITICAL" enabled_by_default="false" />
@@ -43,7 +40,6 @@
     <inspection_tool class="AlibabaIbatisMethodQueryForList" enabled="false" level="MAJOR" enabled_by_default="false" />
     <inspection_tool class="AlibabaLowerCamelCaseVariableNaming" enabled="false" level="CRITICAL" enabled_by_default="false" />
     <inspection_tool class="AlibabaMethodReturnWrapperType" enabled="false" level="MAJOR" enabled_by_default="false" />
-    <inspection_tool class="AlibabaMethodTooLong" enabled="false" level="MAJOR" enabled_by_default="false" />
     <inspection_tool class="AlibabaPackageNaming" enabled="false" level="MAJOR" enabled_by_default="false" />
     <inspection_tool class="AlibabaPojoMustOverrideToString" enabled="false" level="MAJOR" enabled_by_default="false" />
     <inspection_tool class="AlibabaPojoMustUsePrimitiveField" enabled="false" level="MAJOR" enabled_by_default="false" />
@@ -60,7 +56,6 @@
     <inspection_tool class="AlibabaUndefineMagicConstant" enabled="false" level="MAJOR" enabled_by_default="false" />
     <inspection_tool class="AlibabaUnsupportedExceptionWithModifyAsList" enabled="false" level="CRITICAL" enabled_by_default="false" />
     <inspection_tool class="AlibabaUseQuietReferenceNotation" enabled="false" level="MAJOR" enabled_by_default="false" />
-    <inspection_tool class="AlibabaUseRightCaseForDateFormat" enabled="false" level="CRITICAL" enabled_by_default="false" />
     <inspection_tool class="AndroidLintContentDescription" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="AndroidLintHardcodedText" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="AndroidLintRelativeOverlap" enabled="false" level="WARNING" enabled_by_default="false" />

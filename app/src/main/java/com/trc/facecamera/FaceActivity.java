@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.hardware.Camera;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -48,6 +47,9 @@ public class FaceActivity extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getRealMetrics(metric);
         screenWidth = metric.widthPixels;
         screenHeight = metric.heightPixels;
+
+        screenWidth = 1280;
+        screenHeight = 720;
     }
 
     @Override
@@ -98,6 +100,7 @@ public class FaceActivity extends AppCompatActivity {
         }*/
 
         params.setPictureSize(1280, 720);
+        params.setPreviewSize(1280, 720);
         camera.setParameters(params);
 
         //如果不设置预览，camera不会返回数据流
@@ -153,18 +156,48 @@ public class FaceActivity extends AppCompatActivity {
     private Camera.PictureCallback pictureCallback = new Camera.PictureCallback() {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
-            File file = new File(getExternalCacheDir(), String.valueOf(System.currentTimeMillis()) + ".jpg");
+
+            String fileName = String.valueOf(System.currentTimeMillis());
+            File file = new File(getExternalCacheDir(), fileName + ".jpg");
+
 
             Log.d(TAG, "准备保存照片");
 
+            //相机坐标轴方向与屏幕方向不同
+            Matrix matrix = new Matrix();
+            matrix.setRotate(cameraOrientation);
+
             FileOutputStream fileOutputStream = null;
+
+            Bitmap bitmap;
+            Bitmap originBitmap;
+
             try {
                 fileOutputStream = new FileOutputStream(file, false);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                Matrix matrix = new Matrix();
-                matrix.preRotate(cameraOrientation);
-                bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+
+                bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                originBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                //保存原图像
+                originBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+
+                //遍历裁剪人脸图片
+                FileOutputStream fileOutputStreamTemp;
+                File fileTemp;
+                for (Camera.Face face : currentFaces) {
+                    if (face.score <= 50) {
+                        continue;
+                    }
+                    fileTemp = new File(getExternalCacheDir(), fileName + "_" + face.hashCode() + ".jpg");
+                    fileOutputStreamTemp = new FileOutputStream(fileTemp, false);
+
+                    //换算出人脸区域坐标
+                    RectF rectF = convertRect(face, screenWidth, screenHeight);
+                    //裁剪bitmap
+                    Bitmap bitmap1 = Bitmap.createBitmap(bitmap, (int) rectF.left, (int) rectF.top, (int) rectF.width(), (int) rectF.height(), matrix, true);
+                    //输出人脸部分bitmap
+                    bitmap1.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStreamTemp);
+                }
+
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } finally {
@@ -184,6 +217,7 @@ public class FaceActivity extends AppCompatActivity {
     };
 
     private boolean takePicturing = false;  //是否正在拍照
+    private Camera.Face[] currentFaces;
 
     class MyFaceDetectionListener implements Camera.FaceDetectionListener {
         @Override
@@ -194,14 +228,14 @@ public class FaceActivity extends AppCompatActivity {
             if (takePicturing) {
                 return;
             }
+            currentFaces = faces;
             Camera.Face face = faces[0];
 
             //检测到人脸的处理
-            boolean result = checkFacePosition(face, screenWidth / 2, screenHeight / 3);//检测人脸是否位于范围内
+            /*boolean result = checkFacePosition(face, screenWidth / 2, screenHeight / 3);//检测人脸是否位于范围内
             if (!result) {
                 return;
-            }
-
+            }*/
             if (lastFaceId == face.id && pictureCount > MAX_PICTURE_COUNT) {
                 return;
             }
@@ -243,6 +277,26 @@ public class FaceActivity extends AppCompatActivity {
         return (Math.abs(faceX - x) <= diff) && (Math.abs(faceY - y) <= diff);
     }
 
+    private RectF convertRect(Camera.Face face, int width, int height) {
+        RectF mRect = new RectF();
+        Matrix matrix = new Matrix();
+
+        boolean mirror = false;
+        matrix.setScale(mirror ? -1 : 1, 1);
+        // This is the value for android.hardware.Camera.setDisplayOrientation.
+        // matrix.postRotate(previewOrientation);
+        // Camera driver coordinates range from (-1000, -1000) to (1000, 1000).
+        // UI coordinates range from (0, 0) to (width, height).
+        matrix.postScale(width / 2000f, height / 2000f);
+        matrix.postTranslate(width / 2f, height / 2f);
+
+        mRect.set(face.rect);
+        matrix.mapRect(mRect);
+
+        return mRect;
+    }
+
+
     /**
      * camera拍出来的坐标系与我们屏幕的坐标系不同，需要变换
      *
@@ -252,8 +306,8 @@ public class FaceActivity extends AppCompatActivity {
      * @param viewWidth          预览View的宽高
      * @param viewHeight
      */
-    public void prepareMatrix(Matrix matrix, boolean mirror, int displayOrientation,
-                              int viewWidth, int viewHeight) {
+    public Matrix prepareMatrix(Matrix matrix, boolean mirror, int displayOrientation,
+                                int viewWidth, int viewHeight) {
         // Need mirror for front camera.
         matrix.setScale(mirror ? -1 : 1, 1);
         // This is the value for android.hardware.Camera.setDisplayOrientation.
@@ -262,5 +316,7 @@ public class FaceActivity extends AppCompatActivity {
         // UI coordinates range from (0, 0) to (width, height)
         matrix.postScale(viewWidth / 2000f, viewHeight / 2000f);
         matrix.postTranslate(viewWidth / 2f, viewHeight / 2f);
+
+        return matrix;
     }
 }
