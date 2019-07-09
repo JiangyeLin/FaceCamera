@@ -92,7 +92,7 @@ public class FaceActivity extends AppCompatActivity {
         for (Camera.Size size : params.getSupportedPictureSizes()) {
             //Log.d(TAG, size.width + "  " + size.height);
         }
-       /*  Camera.Size size = CameraUtil.getBestCameraSize(params.getSupportedPreviewSizes(), screenWidth, screenHeight);
+        /*  Camera.Size size = CameraUtil.getBestCameraSize(params.getSupportedPreviewSizes(), screenWidth, screenHeight);
         if (null == size) {
             params.setPictureSize(1280, 720);
         } else {
@@ -179,6 +179,7 @@ public class FaceActivity extends AppCompatActivity {
                 originBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
                 //保存原图像
                 originBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+                originBitmap.recycle();
 
                 //遍历裁剪人脸图片
                 FileOutputStream fileOutputStreamTemp;

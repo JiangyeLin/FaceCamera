@@ -20,4 +20,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="人脸拍照" />
+
+    <Button
+        android:id="@+id/btnCamera2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="camera2"
+        app:layout_constraintTop_toBottomOf="@id/btnCamera" />
 </android.support.constraint.ConstraintLayout>
