@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -22,9 +21,11 @@ import android.hardware.camera2.params.Face;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.Log;
 import android.view.Surface;
 import android.view.TextureView;
@@ -74,7 +75,6 @@ public class Camera2Activity extends AppCompatActivity {
                     byte[] bytes = new byte[buffer.remaining()];
                     buffer.get(bytes);
 
-
                     FileOutputStream output = null;
                     try {
                         output = new FileOutputStream(file);
@@ -88,7 +88,6 @@ public class Camera2Activity extends AppCompatActivity {
 
                         File fileTemp;
                         for (Face face : currentFaces) {
-                            Rect rect = face.getBounds();
                             if (face.getScore() <= 50) {
                                 //continue;
                             }
@@ -154,8 +153,6 @@ public class Camera2Activity extends AppCompatActivity {
             for (String cameraId : cameraManager.getCameraIdList()) {
                 CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraId);
                 Log.d(TAG, "camera2支持程度: " + cameraCharacteristics.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL));
-                Log.d(TAG, "openCamera: 人脸支持程度" + Arrays.toString(cameraCharacteristics.get(CameraCharacteristics.STATISTICS_INFO_AVAILABLE_FACE_DETECT_MODES)));
-                Log.d(TAG, "openCamera: 最高人脸检测数量" + cameraCharacteristics.get(CameraCharacteristics.STATISTICS_INFO_MAX_FACE_COUNT));
 
                 //StreamConfigurationMap map = cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 
@@ -165,6 +162,10 @@ public class Camera2Activity extends AppCompatActivity {
                 // 不使用前置摄像头。
                 Integer facing = cameraCharacteristics.get(CameraCharacteristics.LENS_FACING);
                 if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
+                    //前置摄像头
+                    Log.d(TAG, "openCamera: 人脸支持程度" + Arrays.toString(cameraCharacteristics.get(CameraCharacteristics.STATISTICS_INFO_AVAILABLE_FACE_DETECT_MODES)));
+                    Log.d(TAG, "openCamera: 最高人脸检测数量" + cameraCharacteristics.get(CameraCharacteristics.STATISTICS_INFO_MAX_FACE_COUNT));
+
                     cameraManager.openCamera(cameraId, stateCallback, null);
                     return;
                 }
@@ -210,7 +211,7 @@ public class Camera2Activity extends AppCompatActivity {
             // This is the output Surface we need to start preview.
             Surface surface = new Surface(texture);
 
-            //设置了一个具有输出Surface的CaptureRequest.Builder。
+            //设置了一个具有输出Surface的CaptureRequest.Builder
             captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             captureRequestBuilder.addTarget(surface);
             captureRequestBuilder.addTarget(imageReader.getSurface());
