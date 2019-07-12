@@ -1,11 +1,9 @@
-package com.trc.facecamera;
+package com.trc.facecamera.camera2;
 
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.trc.facecamera.camera.CameraHelper;
 
 /**
  * JiangyeLin on 2019-07-08

@@ -1,14 +1,15 @@
-package com.trc.facecamera.camera;
+package com.trc.facecamera.camera2;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.pm.PackageManager;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
+
+import java.util.List;
 
 /**
  * JiangyeLin on 2019-07-10
@@ -40,13 +41,28 @@ public class CameraHelper {
 
     public void register(AppCompatActivity activity) {
         this.activity = activity;
-        if (activity.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-        }
+
+        PermissionUtil.requestPermission(activity, new PermissionUtil.Callback() {
+            @Override
+            public void onPermissionGranted() {
+                Log.d("权限申请", "onPermissionGranted: ");
+            }
+
+            @Override
+            public void onPermissionDenied(List<String> permissions) {
+                Log.d("权限申请", "onPermissionDenied: ");
+            }
+        }, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (activity.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            }
+        }*/
 
         activity.getLifecycle().addObserver(new LifecycleObserver() {
             @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
             public void resume() {
+                Log.d("camerahelper", "resume: ");
                 if (null == cameraUtil) {
                     cameraUtil = new CameraUtil();
                 }
@@ -55,6 +71,7 @@ public class CameraHelper {
 
             @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
             public void release() {
+                Log.d("camerahelper", "release: ");
                 //释放资源
                 if (null != cameraUtil) {
                     cameraUtil.release();

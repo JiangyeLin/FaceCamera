@@ -2,10 +2,14 @@ package com.trc.facecamera;
 
 import android.Manifest;
 import android.content.Intent;
-import androidx.core.app.ActivityCompat;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import com.trc.facecamera.camera1.FaceActivity;
+import com.trc.facecamera.camera2.Camera2Activity;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -27,4 +27,11 @@
         android:layout_height="wrap_content"
         android:text="camera2"
         app:layout_constraintTop_toBottomOf="@id/btnCamera" />
+
+    <Button
+        android:id="@+id/btnCamerax"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="camerax"
+        app:layout_constraintTop_toBottomOf="@id/btnCamera2" />
 </androidx.constraintlayout.widget.ConstraintLayout>

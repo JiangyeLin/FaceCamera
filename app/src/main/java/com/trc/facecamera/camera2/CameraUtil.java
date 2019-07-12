@@ -1,4 +1,4 @@
-package com.trc.facecamera.camera;
+package com.trc.facecamera.camera2;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -192,73 +192,70 @@ public class CameraUtil {
     public void initCamera() {
         Activity activity = CameraHelper.getInstance().getActivity();
         textureView = new TextureView(activity);
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(1, 1);
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         activity.addContentView(textureView, layoutParams);
 
         //获取拍照数据流
         imageReader = ImageReader.newInstance(CameraHelper.getInstance().getPreviewWidth(), CameraHelper.getInstance().getPreviewHeight(), ImageFormat.JPEG, 2);
-        imageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
-            @Override
-            public void onImageAvailable(ImageReader reader) {
-                //该行代码与image.close必须调用
-                Image image = reader.acquireNextImage();
+        imageReader.setOnImageAvailableListener(reader -> {
+            //该行代码与image.close必须调用
+            Image image = reader.acquireNextImage();
 
-                if (saving) {
-                    Log.d(TAG, "onImageAvailable: 保存照片");
-                    String fileName = String.valueOf(System.currentTimeMillis());
+            if (saving) {
+                Log.d(TAG, "onImageAvailable: 保存照片");
+                String fileName = String.valueOf(System.currentTimeMillis());
 
-                    File file = new File(CameraHelper.getInstance().getActivity().getExternalCacheDir(), fileName + ".jpg");
+                File file = new File(CameraHelper.getInstance().getActivity().getExternalCacheDir(), fileName + ".jpg");
 
-                    ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-                    byte[] bytes = new byte[buffer.remaining()];
-                    buffer.get(bytes);
+                ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+                byte[] bytes = new byte[buffer.remaining()];
+                buffer.get(bytes);
 
-                    FileOutputStream output = null;
-                    try {
-                        output = new FileOutputStream(file);
+                FileOutputStream output = null;
+                try {
+                    output = new FileOutputStream(file);
 
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output);
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output);
 
-                        //遍历裁剪人脸图片
-                        FileOutputStream fileOutputStreamTemp;
+                    //遍历裁剪人脸图片
+                    FileOutputStream fileOutputStreamTemp;
 
-                        File fileTemp;
-                        for (Face face : currentFaces) {
-                            fileTemp = new File(CameraHelper.getInstance().getActivity().getExternalCacheDir(), fileName + "_" + face.hashCode() + ".jpg");
-                            fileOutputStreamTemp = new FileOutputStream(fileTemp, false);
+                    File fileTemp;
+                    for (Face face : currentFaces) {
+                        fileTemp = new File(CameraHelper.getInstance().getActivity().getExternalCacheDir(), fileName + "_" + face.hashCode() + ".jpg");
+                        fileOutputStreamTemp = new FileOutputStream(fileTemp, false);
 
-                            //换算出人脸区域坐标
-                            //Rect origin = face.getBounds();
-                            //String format = String.format("左=%1$d  右= %2$d 上=%3$d  下=%4$d", origin.left, origin.right, origin.top, origin.bottom);
-                            //Log.d(TAG, "onImageAvailable: 原矩阵 " + format);
-                            RectF rectF = convertRect(face, CameraHelper.getInstance().getPreviewWidth(), CameraHelper.getInstance().getPreviewHeight(), sensorRect.width(), sensorRect.height());
+                        //换算出人脸区域坐标
+                        //Rect origin = face.getBounds();
+                        //String format = String.format("左=%1$d  右= %2$d 上=%3$d  下=%4$d", origin.left, origin.right, origin.top, origin.bottom);
+                        //Log.d(TAG, "onImageAvailable: 原矩阵 " + format);
+                        RectF rectF = convertRect(face, CameraHelper.getInstance().getPreviewWidth(), CameraHelper.getInstance().getPreviewHeight(), sensorRect.width(), sensorRect.height());
 
-                            //format = String.format("左=%1$d  右= %2$d 上=%3$d  下=%4$d", (int) rectF.left, (int) rectF.right, (int) rectF.top, (int) rectF.bottom);
-                            //Log.d(TAG, "onImageAvailable: 新矩阵  " + format);
+                        //format = String.format("左=%1$d  右= %2$d 上=%3$d  下=%4$d", (int) rectF.left, (int) rectF.right, (int) rectF.top, (int) rectF.bottom);
+                        //Log.d(TAG, "onImageAvailable: 新矩阵  " + format);
 
-                            //裁剪bitmap
-                            Bitmap bitmap1 = Bitmap.createBitmap(bitmap, (int) rectF.left, (int) rectF.top, (int) rectF.width(), (int) rectF.height());
-                            //输出人脸部分bitmap
-                            bitmap1.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStreamTemp);
-                        }
+                        //裁剪bitmap
+                        Bitmap bitmap1 = Bitmap.createBitmap(bitmap, (int) rectF.left, (int) rectF.top, (int) rectF.width(), (int) rectF.height());
+                        //输出人脸部分bitmap
+                        bitmap1.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStreamTemp);
+                    }
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        image.close();
-                        if (null != output) {
-                            try {
-                                output.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    image.close();
+                    if (null != output) {
+                        try {
+                            output.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
                     }
-                    saving = false;
-                } else {
-                    image.close();
                 }
+                saving = false;
+            } else {
+                image.close();
             }
         }, null);
 

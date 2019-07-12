@@ -1,4 +1,4 @@
-package com.trc.facecamera;
+package com.trc.facecamera.camera1;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -7,14 +7,16 @@ import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.hardware.Camera;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Surface;
 import android.widget.FrameLayout;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.trc.facecamera.R;
+import com.trc.facecamera.camera2.CameraUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -77,7 +79,7 @@ public class FaceActivity extends AppCompatActivity {
      */
     private void initCameraPreview() {
         if (null == camera) {
-            camera = CameraUtil.getFrontCamera();
+            camera = new CameraUtil().getFrontCamera();
         }
         if (null == camera) {
             //ToastUtil.showNormalToast("抱歉，摄像头被占用,暂无法使用本功能");

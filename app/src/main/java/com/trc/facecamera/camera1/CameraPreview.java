@@ -1,4 +1,4 @@
-package com.trc.facecamera;
+package com.trc.facecamera.camera1;
 
 import android.content.Context;
 import android.hardware.Camera;
